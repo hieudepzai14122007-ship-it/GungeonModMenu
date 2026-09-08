@@ -1,0 +1,15 @@
+# Local settings, logs, build intermediates and backups
+.vs/
+.idea/
+**/obj/
+**/bin/
+**/_backup/
+*.pdb
+*.log
+*.cfg
+.env
+.env.*
+*.user
+*.suo
+Thumbs.db
+Desktop.ini
