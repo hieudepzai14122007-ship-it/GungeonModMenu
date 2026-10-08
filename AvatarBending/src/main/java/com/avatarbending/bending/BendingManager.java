@@ -124,6 +124,11 @@ public final class BendingManager {
 				String.format("%.1f", cooldown / 20f)).formatted(Formatting.GRAY), true);
 			return false;
 		}
+		if (ability.avatarStateOnly() && !data.inAvatarState()) {
+			player.sendMessage(Text.translatable("message.avatarbending.needs_avatar_state", ability.displayName())
+				.formatted(Formatting.AQUA), true);
+			return false;
+		}
 		boolean free = data.inAvatarState() || player.getAbilities().creativeMode;
 		if (!free && data.chi() < ability.chiCost()) {
 			player.sendMessage(Text.translatable("message.avatarbending.no_chi").formatted(Formatting.RED), true);

@@ -1,27 +1,65 @@
 package com.avatarbending.entity;
 
+import com.avatarbending.ability.AbilityContext;
 import com.avatarbending.bending.Element;
+import com.avatarbending.fx.Colors;
+import com.avatarbending.fx.Fx;
+import com.avatarbending.sound.ModSounds;
+import com.avatarbending.sound.Sfx;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.LivingEntity;
-import net.minecraft.particle.ParticleTypes;
+import net.minecraft.entity.data.DataTracker;
+import net.minecraft.entity.data.TrackedData;
+import net.minecraft.entity.data.TrackedDataHandlerRegistry;
+import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
-import net.minecraft.sound.SoundCategory;
-import net.minecraft.sound.SoundEvents;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 
 /**
  * A blast of fire that sets its target ablaze. Never sets blocks on fire.
+ * Styles: normal, blue (Azula-style) and falling fire meteors (Firestorm) that explode.
  */
 public class FireBlastEntity extends BendingProjectileEntity {
+	public static final int STYLE_NORMAL = 0;
+	public static final int STYLE_BLUE = 1;
+	public static final int STYLE_METEOR = 2;
+	private static final TrackedData<Integer> STYLE = DataTracker.registerData(FireBlastEntity.class, TrackedDataHandlerRegistry.INTEGER);
+
 	public FireBlastEntity(EntityType<? extends FireBlastEntity> type, World world) {
 		super(type, world);
 		this.maxLife = 30;
 	}
 
 	@Override
+	protected void initDataTracker(DataTracker.Builder builder) {
+		super.initDataTracker(builder);
+		builder.add(STYLE, STYLE_NORMAL);
+	}
+
+	public int style() {
+		return dataTracker.get(STYLE);
+	}
+
+	public void setStyle(int style) {
+		dataTracker.set(STYLE, style);
+		if (style == STYLE_METEOR) {
+			this.maxLife = 80;
+		}
+	}
+
+	public int color() {
+		return style() == STYLE_BLUE ? Colors.BLUE_FIRE : Colors.FIRE;
+	}
+
+	@Override
 	protected Element element() {
 		return Element.FIRE;
+	}
+
+	@Override
+	protected double gravity() {
+		return style() == STYLE_METEOR ? 0.04 : 0;
 	}
 
 	@Override
@@ -35,32 +73,26 @@ public class FireBlastEntity extends BendingProjectileEntity {
 
 	@Override
 	protected void impact(ServerWorld world, Vec3d pos) {
-		world.spawnParticles(ParticleTypes.FLAME, pos.x, pos.y, pos.z, 25, 0.25, 0.25, 0.25, 0.12);
-		world.spawnParticles(ParticleTypes.LAVA, pos.x, pos.y, pos.z, 4, 0.2, 0.2, 0.2, 0);
-		world.spawnParticles(ParticleTypes.LARGE_SMOKE, pos.x, pos.y, pos.z, 6, 0.2, 0.2, 0.2, 0.02);
-		world.playSound(null, pos.x, pos.y, pos.z, SoundEvents.ENTITY_GENERIC_BURN, SoundCategory.PLAYERS, 0.7f, 1.2f);
+		if (style() == STYLE_METEOR) {
+			Fx.flames(world, pos, Colors.FIRE, 1.4f);
+			Fx.groundShockwave(world, pos, Colors.FIRE, 3.5f);
+			Sfx.play(world, pos, ModSounds.FIRE_EXPLOSION, 1.6f, 1.2f);
+			if (getOwner() instanceof ServerPlayerEntity player) {
+				AbilityContext context = new AbilityContext(player, world, false);
+				for (LivingEntity target : context.targetsAround(pos, 2.8)) {
+					target.timeUntilRegen = 0;
+					target.damage(AbilityContext.damageSource(world, Element.FIRE, this, player), 5f * power);
+					target.setOnFireForTicks(80);
+				}
+			}
+			return;
+		}
+		Fx.flames(world, pos, color(), 0.8f);
+		Sfx.play(world, pos, ModSounds.FIRE_EXPLOSION, 0.6f, 1.6f);
 	}
 
 	@Override
 	protected void expire(ServerWorld world) {
-		world.spawnParticles(ParticleTypes.SMOKE, getX(), getY(), getZ(), 8, 0.15, 0.15, 0.15, 0.02);
-	}
-
-	@Override
-	protected void clientTrail() {
-		World world = getWorld();
-		Vec3d v = getVelocity();
-		double y = getY() + getHeight() / 2;
-		for (int i = 0; i < 6; i++) {
-			world.addParticle(ParticleTypes.FLAME,
-				getX() + (random.nextDouble() - 0.5) * 0.3, y + (random.nextDouble() - 0.5) * 0.3, getZ() + (random.nextDouble() - 0.5) * 0.3,
-				-v.x * 0.08, -v.y * 0.08, -v.z * 0.08);
-		}
-		if (random.nextInt(3) == 0) {
-			world.addParticle(ParticleTypes.SMOKE, getX(), y, getZ(), 0, 0.02, 0);
-		}
-		if (random.nextInt(5) == 0) {
-			world.addParticle(ParticleTypes.LAVA, getX(), y, getZ(), 0, 0, 0);
-		}
+		Fx.flames(world, getPos(), color(), 0.4f);
 	}
 }

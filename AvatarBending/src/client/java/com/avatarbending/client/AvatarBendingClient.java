@@ -1,10 +1,18 @@
 package com.avatarbending.client;
 
+import com.avatarbending.client.fx.AttachedFxManager;
+import com.avatarbending.client.fx.AvatarAuraFx;
+import com.avatarbending.client.fx.ClientFx;
+import com.avatarbending.client.fx.ClientScheduler;
+import com.avatarbending.client.fx.EntityTrails;
+import com.avatarbending.client.fx.ScreenEffects;
+import com.avatarbending.client.particle.ModParticlesClient;
 import com.avatarbending.client.render.AvatarEyesFeatureRenderer;
 import com.avatarbending.client.render.BlockProjectileRenderer;
 import com.avatarbending.client.screen.BendingMenuScreen;
 import com.avatarbending.client.screen.ChooseElementScreen;
 import com.avatarbending.entity.ModEntities;
+import com.avatarbending.fx.ClientHooks;
 import com.avatarbending.item.ModItems;
 import com.avatarbending.network.ModPayloads;
 import net.fabricmc.api.ClientModInitializer;
@@ -16,15 +24,19 @@ import net.fabricmc.fabric.api.client.rendering.v1.HudRenderCallback;
 import net.fabricmc.fabric.api.client.rendering.v1.LivingEntityFeatureRendererRegistrationCallback;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.screen.Screen;
+import net.minecraft.client.network.AbstractClientPlayerEntity;
 import net.minecraft.client.render.entity.EmptyEntityRenderer;
 import net.minecraft.client.render.entity.PlayerEntityRenderer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.particle.ParticleTypes;
 
 public class AvatarBendingClient implements ClientModInitializer {
+	private int auraAge;
+
 	@Override
 	public void onInitializeClient() {
 		KeyBinds.init();
+		ModParticlesClient.register();
 
 		EntityRendererRegistry.register(ModEntities.AIR_BLAST, EmptyEntityRenderer::new);
 		EntityRendererRegistry.register(ModEntities.FIRE_BLAST, EmptyEntityRenderer::new);
@@ -34,6 +46,15 @@ public class AvatarBendingClient implements ClientModInitializer {
 		EntityRendererRegistry.register(ModEntities.BOULDER, BlockProjectileRenderer::new);
 		EntityRendererRegistry.register(ModEntities.ICE_SHARD, BlockProjectileRenderer::new);
 		EntityRendererRegistry.register(ModEntities.METEOR, BlockProjectileRenderer::new);
+		EntityRendererRegistry.register(ModEntities.ROCK, BlockProjectileRenderer::new);
+		EntityRendererRegistry.register(ModEntities.LAVA_BOMB, BlockProjectileRenderer::new);
+		EntityRendererRegistry.register(ModEntities.AIR_BLADE, EmptyEntityRenderer::new);
+		EntityRendererRegistry.register(ModEntities.WATER_ORB, EmptyEntityRenderer::new);
+		EntityRendererRegistry.register(ModEntities.FIRE_DRAGON, EmptyEntityRenderer::new);
+		EntityRendererRegistry.register(ModEntities.MAELSTROM, EmptyEntityRenderer::new);
+		EntityRendererRegistry.register(ModEntities.BLIZZARD, EmptyEntityRenderer::new);
+		EntityRendererRegistry.register(ModEntities.VOLCANO, EmptyEntityRenderer::new);
+		ClientHooks.setEntityVisuals(EntityTrails::tick);
 
 		LivingEntityFeatureRendererRegistrationCallback.EVENT.register((entityType, entityRenderer, helper, context) -> {
 			if (entityRenderer instanceof PlayerEntityRenderer playerRenderer) {
@@ -58,14 +79,33 @@ public class AvatarBendingClient implements ClientModInitializer {
 			}
 		});
 
-		ClientPlayConnectionEvents.DISCONNECT.register((handler, client) -> ClientBenderState.clear());
+		ClientPlayNetworking.registerGlobalReceiver(ModPayloads.FxPayload.ID, (payload, context) -> ClientFx.play(payload));
+		ClientPlayNetworking.registerGlobalReceiver(ModPayloads.AttachFxPayload.ID, (payload, context) -> AttachedFxManager.add(payload));
+
+		ClientPlayConnectionEvents.DISCONNECT.register((handler, client) -> {
+			ClientBenderState.clear();
+			ClientScheduler.clear();
+			AttachedFxManager.clear();
+			ScreenEffects.clear();
+		});
 
 		ClientTickEvents.END_CLIENT_TICK.register(this::onTick);
 	}
 
 	private void onTick(MinecraftClient client) {
-		if (client.player == null) {
+		if (client.player == null || client.world == null) {
 			return;
+		}
+		if (!client.isPaused()) {
+			ScreenEffects.tick();
+			ClientScheduler.tick();
+			AttachedFxManager.tick(client.world);
+			auraAge++;
+			for (AbstractClientPlayerEntity player : client.world.getPlayers()) {
+				if (ClientBenderState.isInAvatarState(player.getId())) {
+					AvatarAuraFx.tick(player, auraAge);
+				}
+			}
 		}
 		if (ClientBenderState.chooserRequested) {
 			if (ClientBenderState.hasBending()) {

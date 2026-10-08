@@ -8,8 +8,10 @@ import com.avatarbending.command.BendingCommand;
 import com.avatarbending.effect.EffectScheduler;
 import com.avatarbending.effect.TempBlocks;
 import com.avatarbending.entity.ModEntities;
+import com.avatarbending.fx.ModParticles;
 import com.avatarbending.item.ModItems;
 import com.avatarbending.network.ModPayloads;
+import com.avatarbending.sound.ModSounds;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.attachment.v1.AttachmentRegistry;
 import net.fabricmc.fabric.api.attachment.v1.AttachmentType;
@@ -71,6 +73,8 @@ public class AvatarBending implements ModInitializer {
 
 	@Override
 	public void onInitialize() {
+		ModSounds.register();
+		ModParticles.register();
 		ModItems.register();
 		ModEntities.register();
 		ModPayloads.register();

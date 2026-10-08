@@ -1,6 +1,7 @@
 package com.avatarbending.entity;
 
 import com.avatarbending.ability.AbilityContext;
+import com.avatarbending.fx.ClientHooks;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.LivingEntity;
@@ -86,7 +87,7 @@ public abstract class GroundSpellEntity extends Entity {
 	public void tick() {
 		super.tick();
 		if (getWorld().isClient) {
-			clientParticles();
+			ClientHooks.entityTick(this);
 			return;
 		}
 		ServerWorld world = (ServerWorld) getWorld();
@@ -119,7 +120,6 @@ public abstract class GroundSpellEntity extends Entity {
 	protected void finish(ServerWorld world, @Nullable AbilityContext context) {
 	}
 
-	protected abstract void clientParticles();
 
 	protected static void push(LivingEntity target, Vec3d velocity) {
 		target.setVelocity(velocity);

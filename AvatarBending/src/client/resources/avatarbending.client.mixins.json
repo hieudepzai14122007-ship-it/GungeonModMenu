@@ -1,0 +1,12 @@
+{
+	"required": true,
+	"package": "com.avatarbending.mixin.client",
+	"compatibilityLevel": "JAVA_21",
+	"client": [
+		"CameraMixin",
+		"ParticleManagerMixin"
+	],
+	"injectors": {
+		"defaultRequire": 1
+	}
+}

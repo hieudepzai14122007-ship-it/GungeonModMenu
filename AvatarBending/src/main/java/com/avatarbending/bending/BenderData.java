@@ -42,6 +42,7 @@ public final class BenderData {
 	private final Map<Ability, Integer> cooldowns = new EnumMap<>(Ability.class);
 	private int fallImmuneTicks;
 	private int suppressedTicks;
+	private int spiritTicks;
 
 	public BenderData() {
 	}
@@ -193,6 +194,9 @@ public final class BenderData {
 		if (suppressedTicks > 0) {
 			suppressedTicks--;
 		}
+		if (spiritTicks > 0) {
+			spiritTicks--;
+		}
 		if (avatarStateCooldown > 0 && avatarStateTicks <= 0) {
 			avatarStateCooldown--;
 		}
@@ -215,6 +219,20 @@ public final class BenderData {
 		suppressedTicks = Math.max(0, ticks);
 	}
 
+	/** Ticks left in Spirit Form (flight is granted while this is above zero). */
+	public int spiritTicks() {
+		return spiritTicks;
+	}
+
+	public void setSpiritTicks(int ticks) {
+		spiritTicks = Math.max(0, ticks);
+	}
+
+	/** True while something (Avatar State, Spirit Form) should let this player fly. */
+	public boolean wantsFlight() {
+		return avatarStateTicks > 0 || spiritTicks > 0;
+	}
+
 	public void reset() {
 		primary = null;
 		avatar = false;
@@ -225,5 +243,6 @@ public final class BenderData {
 		avatarStateCooldown = 0;
 		cooldowns.clear();
 		suppressedTicks = 0;
+		spiritTicks = 0;
 	}
 }

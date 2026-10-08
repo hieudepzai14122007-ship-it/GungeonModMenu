@@ -2,6 +2,7 @@ package com.avatarbending.entity;
 
 import com.avatarbending.ability.AbilityContext;
 import com.avatarbending.bending.Element;
+import com.avatarbending.fx.ClientHooks;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.LivingEntity;
@@ -138,8 +139,10 @@ public abstract class BendingProjectileEntity extends ProjectileEntity {
 	protected void expire(ServerWorld world) {
 	}
 
-	/** Spawns trail particles on the client. */
-	protected abstract void clientTrail();
+	/** Draws the projectile on the client (see ClientHooks / EntityTrails). */
+	protected void clientTrail() {
+		ClientHooks.entityTick(this);
+	}
 
 	protected ServerPlayerEntity ownerPlayer() {
 		return getOwner() instanceof ServerPlayerEntity player ? player : null;

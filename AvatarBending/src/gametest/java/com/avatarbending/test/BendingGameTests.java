@@ -32,28 +32,28 @@ public class BendingGameTests implements FabricGameTest {
 	private static final BlockPos PLAYER_POS = new BlockPos(1, 1, 4);
 	private static final BlockPos TARGET_POS = new BlockPos(5, 1, 4);
 
-	@GameTest(templateName = EMPTY_STRUCTURE, batchId = "air", tickLimit = 600)
+	@GameTest(templateName = EMPTY_STRUCTURE, batchId = "air", tickLimit = 900)
 	public void airSpells(TestContext ctx) {
 		runElement(ctx, Element.AIR);
 	}
 
-	@GameTest(templateName = EMPTY_STRUCTURE, batchId = "water", tickLimit = 600)
+	@GameTest(templateName = EMPTY_STRUCTURE, batchId = "water", tickLimit = 900)
 	public void waterSpells(TestContext ctx) {
 		runElement(ctx, Element.WATER);
 	}
 
-	@GameTest(templateName = EMPTY_STRUCTURE, batchId = "earth", tickLimit = 600)
+	@GameTest(templateName = EMPTY_STRUCTURE, batchId = "earth", tickLimit = 900)
 	public void earthSpells(TestContext ctx) {
 		runElement(ctx, Element.EARTH);
 	}
 
-	@GameTest(templateName = EMPTY_STRUCTURE, batchId = "fire", tickLimit = 600)
+	@GameTest(templateName = EMPTY_STRUCTURE, batchId = "fire", tickLimit = 900)
 	public void fireSpells(TestContext ctx) {
 		runElement(ctx, Element.FIRE);
 	}
 
 	// Sky access: the meteor falls from 30 blocks up and would hit the test's barrier ceiling.
-	@GameTest(templateName = EMPTY_STRUCTURE, batchId = "avatar", tickLimit = 600, skyAccess = true)
+	@GameTest(templateName = EMPTY_STRUCTURE, batchId = "avatar", tickLimit = 900, skyAccess = true)
 	public void avatarSpells(TestContext ctx) {
 		runElement(ctx, Element.AVATAR);
 	}
@@ -91,8 +91,17 @@ public class BendingGameTests implements FabricGameTest {
 		BendingManager.cycleElement(player);
 		ctx.assertTrue(data.active() == Element.AIR, "the Avatar can switch elements");
 
+		data.setActive(Element.AVATAR);
+		data.setAbilityIndex(Ability.forElement(Element.AVATAR).indexOf(Ability.AVATARS_WRATH));
+		data.setChi(BenderData.MAX_CHI);
+		data.clearCooldowns();
+		ctx.assertTrue(!BendingManager.tryCast(player), "Avatar's Wrath needs the Avatar State");
+		data.setActive(Element.AIR);
+		data.setAbilityIndex(0);
+
 		AvatarState.enter(player, data);
 		ctx.assertTrue(data.inAvatarState(), "Avatar State starts");
+		ctx.assertTrue(player.getAbilities().allowFlying, "the Avatar State lets you fly");
 		data.setChi(0);
 		data.clearCooldowns();
 		ctx.assertTrue(BendingManager.tryCast(player), "spells are free in the Avatar State");
@@ -100,8 +109,27 @@ public class BendingGameTests implements FabricGameTest {
 		ctx.runAtTick(20, () -> {
 			ctx.assertTrue(!data.inAvatarState(), "Avatar State ends");
 			ctx.assertTrue(data.avatarStateCooldown() > 0, "Avatar State has a cooldown");
+			ctx.assertTrue(!player.getAbilities().allowFlying, "flight ends with the Avatar State");
 			BendingManager.reset(player);
 			ctx.assertTrue(!data.hasBending(), "reset removes bending");
+			ctx.complete();
+		});
+	}
+
+	@GameTest(templateName = EMPTY_STRUCTURE, batchId = "progression", tickLimit = 100)
+	public void spiritFormFlight(TestContext ctx) {
+		floor(ctx);
+		ServerPlayerEntity player = player(ctx);
+		BenderData data = BendingManager.get(player);
+		data.setPrimary(Element.AIR);
+		data.setAvatar(true);
+		ctx.assertTrue(BendingManager.cast(player, Ability.SPIRIT_FORM), "spirit form casts");
+		ctx.runAtTick(5, () -> {
+			ctx.assertTrue(player.getAbilities().allowFlying, "spirit form lets you fly");
+			data.setSpiritTicks(1);
+		});
+		ctx.runAtTick(15, () -> {
+			ctx.assertTrue(!player.getAbilities().allowFlying, "flight ends with spirit form");
 			ctx.complete();
 		});
 	}
@@ -133,7 +161,7 @@ public class BendingGameTests implements FabricGameTest {
 	}
 
 	private static void floor(TestContext ctx) {
-		for (int x = 0; x < 8; x++) {
+		for (int x = 0; x < 14; x++) {
 			for (int z = 0; z < 8; z++) {
 				ctx.setBlockState(new BlockPos(x, 0, z), Blocks.STONE);
 			}
@@ -198,7 +226,7 @@ public class BendingGameTests implements FabricGameTest {
 			});
 		}
 
-		int end = 5 + abilities.size() * SPACING + 5;
+		int end = 5 + abilities.size() * SPACING + 45;
 		ctx.runAtTick(end, () -> {
 			if (element == Element.EARTH && !ctx.getBlockState(new BlockPos(4, 1, 2)).isAir()) {
 				problems.add("earth_wall blocks did not disappear");

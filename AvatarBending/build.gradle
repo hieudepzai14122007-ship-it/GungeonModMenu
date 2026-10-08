@@ -122,13 +122,41 @@ tasks.register("modpack", Zip) {
 	group = "build"
 	description = "Builds the SKLauncher-ready modpack zip into release/."
 	dependsOn remapJar, modpackManifest
+	inputs.property "version", project.mod_version
 	archiveFileName = "${packName}.zip"
 	destinationDirectory = file("release")
 
 	from(manifestDir)
-	from("packaging/HOW-TO-INSTALL.txt")
+	from("packaging/HOW-TO-INSTALL.txt") {
+		filter { String line -> line.replace('@VERSION@', project.mod_version).replace('@FABRIC@', project.fabric_version) }
+	}
 	into("overrides/mods") {
 		from(remapJar.archiveFile)
 		from(configurations.bundledMods)
+	}
+}
+
+// ---------------------------------------------------------------------------
+// Production test runs: the release jar + Fabric API in a normal (non-dev) game.
+//   ./gradlew prodServer      dedicated server
+//   ./gradlew prodClient      game client
+// ---------------------------------------------------------------------------
+tasks.register("prodServer", net.fabricmc.loom.task.prod.ServerProductionRunTask) {
+	group = "verification"
+	mods.from(remapJar)
+	mods.from(configurations.bundledMods)
+	installerVersion = "1.0.1"
+	runDir = file("run-prod-server")
+	programArgs.add("nogui")
+}
+
+tasks.register("prodClient", net.fabricmc.loom.task.prod.ClientProductionRunTask) {
+	group = "verification"
+	mods.from(remapJar)
+	mods.from(configurations.bundledMods)
+	runDir = file("run-prod")
+	// Extra game arguments, for example -PprodArgs="--quickPlaySingleplayer MyWorld"
+	if (project.hasProperty("prodArgs")) {
+		programArgs.addAll(project.property("prodArgs").toString().split(" ") as List)
 	}
 }

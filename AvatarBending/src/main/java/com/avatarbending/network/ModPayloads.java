@@ -173,6 +173,63 @@ public final class ModPayloads {
 		}
 	}
 
+	/** A positional visual effect, rendered entirely on the client (see {@link com.avatarbending.fx.FxType}). */
+	public record FxPayload(int type, double x, double y, double z, float vx, float vy, float vz, float scale, int color, int data)
+		implements CustomPayload {
+		public static final Id<FxPayload> ID = id("fx");
+		public static final PacketCodec<RegistryByteBuf, FxPayload> CODEC = CustomPayload.codecOf(FxPayload::write, FxPayload::read);
+
+		private void write(PacketByteBuf buf) {
+			buf.writeVarInt(type);
+			buf.writeDouble(x);
+			buf.writeDouble(y);
+			buf.writeDouble(z);
+			buf.writeFloat(vx);
+			buf.writeFloat(vy);
+			buf.writeFloat(vz);
+			buf.writeFloat(scale);
+			buf.writeInt(color);
+			buf.writeVarInt(data);
+		}
+
+		private static FxPayload read(PacketByteBuf buf) {
+			return new FxPayload(buf.readVarInt(), buf.readDouble(), buf.readDouble(), buf.readDouble(),
+				buf.readFloat(), buf.readFloat(), buf.readFloat(), buf.readFloat(), buf.readInt(), buf.readVarInt());
+		}
+
+		@Override
+		public Id<? extends CustomPayload> getId() {
+			return ID;
+		}
+	}
+
+	/** A visual effect that follows an entity (see {@link com.avatarbending.fx.AttachedFxType}). */
+	public record AttachFxPayload(int entityId, int type, int duration, int data, float ax, float ay, float az)
+		implements CustomPayload {
+		public static final Id<AttachFxPayload> ID = id("attach_fx");
+		public static final PacketCodec<RegistryByteBuf, AttachFxPayload> CODEC = CustomPayload.codecOf(AttachFxPayload::write, AttachFxPayload::read);
+
+		private void write(PacketByteBuf buf) {
+			buf.writeVarInt(entityId);
+			buf.writeVarInt(type);
+			buf.writeVarInt(duration);
+			buf.writeInt(data);
+			buf.writeFloat(ax);
+			buf.writeFloat(ay);
+			buf.writeFloat(az);
+		}
+
+		private static AttachFxPayload read(PacketByteBuf buf) {
+			return new AttachFxPayload(buf.readVarInt(), buf.readVarInt(), buf.readVarInt(), buf.readInt(),
+				buf.readFloat(), buf.readFloat(), buf.readFloat());
+		}
+
+		@Override
+		public Id<? extends CustomPayload> getId() {
+			return ID;
+		}
+	}
+
 	/** Sends a packet only if the player's client has this mod installed. */
 	public static void send(ServerPlayerEntity player, CustomPayload payload) {
 		if (player.networkHandler != null && ServerPlayNetworking.canSend(player, payload.getId())) {
@@ -192,6 +249,8 @@ public final class ModPayloads {
 		PayloadTypeRegistry.playS2C().register(OpenChooserPayload.ID, OpenChooserPayload.CODEC);
 		PayloadTypeRegistry.playS2C().register(AvatarVisualPayload.ID, AvatarVisualPayload.CODEC);
 		PayloadTypeRegistry.playS2C().register(SpiritPopPayload.ID, SpiritPopPayload.CODEC);
+		PayloadTypeRegistry.playS2C().register(FxPayload.ID, FxPayload.CODEC);
+		PayloadTypeRegistry.playS2C().register(AttachFxPayload.ID, AttachFxPayload.CODEC);
 
 		// Handlers run on the server thread.
 		ServerPlayNetworking.registerGlobalReceiver(CastPayload.ID,

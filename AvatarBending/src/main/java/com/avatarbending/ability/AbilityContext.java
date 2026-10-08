@@ -90,6 +90,24 @@ public final class AbilityContext {
 		return player.getRotationVec(1f);
 	}
 
+	/** Point in front of the chest where bending is gathered and released. */
+	public Vec3d hands() {
+		return eyes().add(look().multiply(0.8)).add(0, -0.3, 0);
+	}
+
+	public Vec3d feet() {
+		return player.getPos();
+	}
+
+	public Vec3d chest() {
+		return player.getPos().add(0, player.getHeight() * 0.6, 0);
+	}
+
+	/** Plays a sound at the caster (volume above 1 = audible from further away). */
+	public void sfx(net.minecraft.sound.SoundEvent sound, float volume, float pitch) {
+		com.avatarbending.sound.Sfx.play(world, player.getPos(), sound, volume, pitch);
+	}
+
 	/** Horizontal look direction (never zero). */
 	public Vec3d flatLook() {
 		Vec3d look = look();
@@ -129,6 +147,25 @@ public final class AbilityContext {
 			return entityHit;
 		}
 		return blockHit;
+	}
+
+	/**
+	 * Returns {@code to}, or the point {@code margin} blocks before the first block in the way, so
+	 * things spawned "in the sky" still work under a roof or in a cave.
+	 */
+	public Vec3d clearPath(Vec3d from, Vec3d to, double margin) {
+		BlockHitResult hit = world.raycast(new RaycastContext(from, to, RaycastContext.ShapeType.COLLIDER,
+			RaycastContext.FluidHandling.NONE, player));
+		if (hit.getType() == HitResult.Type.MISS) {
+			return to;
+		}
+		Vec3d delta = to.subtract(from);
+		double length = delta.length();
+		if (length < 1.0E-4) {
+			return from;
+		}
+		double distance = Math.max(0, hit.getPos().distanceTo(from) - margin);
+		return from.add(delta.multiply(distance / length));
 	}
 
 	@Nullable

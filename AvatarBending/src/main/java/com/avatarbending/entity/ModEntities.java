@@ -25,12 +25,29 @@ public final class ModEntities {
 	public static final EntityType<TidalWaveEntity> TIDAL_WAVE = register("tidal_wave",
 		EntityType.Builder.<TidalWaveEntity>create(TidalWaveEntity::new, SpawnGroup.MISC).dimensions(1.0f, 1.0f));
 
+	public static final EntityType<AirBladeEntity> AIR_BLADE = register("air_blade",
+		EntityType.Builder.<AirBladeEntity>create(AirBladeEntity::new, SpawnGroup.MISC).dimensions(2.2f, 0.6f));
+	public static final EntityType<WaterOrbEntity> WATER_ORB = register("water_orb",
+		EntityType.Builder.<WaterOrbEntity>create(WaterOrbEntity::new, SpawnGroup.MISC).dimensions(0.8f, 0.8f));
+	public static final EntityType<RockEntity> ROCK = register("rock",
+		EntityType.Builder.<RockEntity>create(RockEntity::new, SpawnGroup.MISC).dimensions(0.45f, 0.45f));
+	public static final EntityType<LavaBombEntity> LAVA_BOMB = register("lava_bomb",
+		EntityType.Builder.<LavaBombEntity>create(LavaBombEntity::new, SpawnGroup.MISC).dimensions(0.55f, 0.55f).makeFireImmune());
+	public static final EntityType<FireDragonEntity> FIRE_DRAGON = register("fire_dragon",
+		EntityType.Builder.<FireDragonEntity>create(FireDragonEntity::new, SpawnGroup.MISC).dimensions(0.9f, 0.9f).makeFireImmune());
+	public static final EntityType<MaelstromEntity> MAELSTROM = register("maelstrom",
+		EntityType.Builder.<MaelstromEntity>create(MaelstromEntity::new, SpawnGroup.MISC).dimensions(1.0f, 1.0f));
+	public static final EntityType<BlizzardEntity> BLIZZARD = register("blizzard",
+		EntityType.Builder.<BlizzardEntity>create(BlizzardEntity::new, SpawnGroup.MISC).dimensions(1.0f, 1.0f));
+	public static final EntityType<VolcanoEntity> VOLCANO = register("volcano",
+		EntityType.Builder.<VolcanoEntity>create(VolcanoEntity::new, SpawnGroup.MISC).dimensions(1.0f, 1.0f).makeFireImmune());
+
 	private ModEntities() {
 	}
 
 	private static <T extends Entity> EntityType<T> register(String name, EntityType.Builder<T> builder) {
 		EntityType<T> type = builder
-			.maxTrackingRange(10)
+			.maxTrackingRange(12)
 			.trackingTickInterval(1)
 			.disableSaving()
 			.disableSummon()

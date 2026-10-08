@@ -1,0 +1,214 @@
+{
+  "air_whoosh": {
+    "sounds": [
+      {
+        "name": "avatarbending:air_whoosh1"
+      },
+      {
+        "name": "avatarbending:air_whoosh2"
+      },
+      {
+        "name": "avatarbending:air_whoosh3"
+      }
+    ],
+    "subtitle": "subtitles.avatarbending.air_whoosh"
+  },
+  "air_blast": {
+    "sounds": [
+      {
+        "name": "avatarbending:air_blast"
+      }
+    ],
+    "subtitle": "subtitles.avatarbending.air_blast"
+  },
+  "air_slash": {
+    "sounds": [
+      {
+        "name": "avatarbending:air_slash1"
+      },
+      {
+        "name": "avatarbending:air_slash2"
+      }
+    ],
+    "subtitle": "subtitles.avatarbending.air_slash"
+  },
+  "wind_howl": {
+    "sounds": [
+      {
+        "name": "avatarbending:wind_howl"
+      }
+    ],
+    "subtitle": "subtitles.avatarbending.wind_howl"
+  },
+  "fire_whoosh": {
+    "sounds": [
+      {
+        "name": "avatarbending:fire_whoosh1"
+      },
+      {
+        "name": "avatarbending:fire_whoosh2"
+      },
+      {
+        "name": "avatarbending:fire_whoosh3"
+      }
+    ],
+    "subtitle": "subtitles.avatarbending.fire_whoosh"
+  },
+  "fire_roar": {
+    "sounds": [
+      {
+        "name": "avatarbending:fire_roar"
+      }
+    ],
+    "subtitle": "subtitles.avatarbending.fire_roar"
+  },
+  "fire_explosion": {
+    "sounds": [
+      {
+        "name": "avatarbending:fire_explosion"
+      }
+    ],
+    "subtitle": "subtitles.avatarbending.fire_explosion"
+  },
+  "electric_charge": {
+    "sounds": [
+      {
+        "name": "avatarbending:electric_charge"
+      }
+    ],
+    "subtitle": "subtitles.avatarbending.electric_charge"
+  },
+  "lightning_strike": {
+    "sounds": [
+      {
+        "name": "avatarbending:lightning_strike"
+      }
+    ],
+    "subtitle": "subtitles.avatarbending.lightning_strike"
+  },
+  "water_whoosh": {
+    "sounds": [
+      {
+        "name": "avatarbending:water_whoosh1"
+      },
+      {
+        "name": "avatarbending:water_whoosh2"
+      },
+      {
+        "name": "avatarbending:water_whoosh3"
+      }
+    ],
+    "subtitle": "subtitles.avatarbending.water_whoosh"
+  },
+  "water_surge": {
+    "sounds": [
+      {
+        "name": "avatarbending:water_surge"
+      }
+    ],
+    "subtitle": "subtitles.avatarbending.water_surge"
+  },
+  "ice_crack": {
+    "sounds": [
+      {
+        "name": "avatarbending:ice_crack1"
+      },
+      {
+        "name": "avatarbending:ice_crack2"
+      },
+      {
+        "name": "avatarbending:ice_crack3"
+      }
+    ],
+    "subtitle": "subtitles.avatarbending.ice_crack"
+  },
+  "rock_rumble": {
+    "sounds": [
+      {
+        "name": "avatarbending:rock_rumble"
+      }
+    ],
+    "subtitle": "subtitles.avatarbending.rock_rumble"
+  },
+  "rock_impact": {
+    "sounds": [
+      {
+        "name": "avatarbending:rock_impact1"
+      },
+      {
+        "name": "avatarbending:rock_impact2"
+      },
+      {
+        "name": "avatarbending:rock_impact3"
+      }
+    ],
+    "subtitle": "subtitles.avatarbending.rock_impact"
+  },
+  "quake_boom": {
+    "sounds": [
+      {
+        "name": "avatarbending:quake_boom"
+      }
+    ],
+    "subtitle": "subtitles.avatarbending.quake_boom"
+  },
+  "charge_magic": {
+    "sounds": [
+      {
+        "name": "avatarbending:charge_magic"
+      }
+    ],
+    "subtitle": "subtitles.avatarbending.charge_magic"
+  },
+  "spirit_chime": {
+    "sounds": [
+      {
+        "name": "avatarbending:spirit_chime"
+      }
+    ],
+    "subtitle": "subtitles.avatarbending.spirit_chime"
+  },
+  "avatar_state": {
+    "sounds": [
+      {
+        "name": "avatarbending:avatar_state"
+      }
+    ],
+    "subtitle": "subtitles.avatarbending.avatar_state"
+  },
+  "avatar_pulse": {
+    "sounds": [
+      {
+        "name": "avatarbending:avatar_pulse"
+      }
+    ],
+    "subtitle": "subtitles.avatarbending.avatar_pulse"
+  },
+  "energy_beam": {
+    "sounds": [
+      {
+        "name": "avatarbending:energy_beam"
+      }
+    ],
+    "subtitle": "subtitles.avatarbending.energy_beam"
+  },
+  "metal_zing": {
+    "sounds": [
+      {
+        "name": "avatarbending:metal_zing"
+      }
+    ],
+    "subtitle": "subtitles.avatarbending.metal_zing"
+  },
+  "whip_crack": {
+    "sounds": [
+      {
+        "name": "avatarbending:whip_crack1"
+      },
+      {
+        "name": "avatarbending:whip_crack2"
+      }
+    ],
+    "subtitle": "subtitles.avatarbending.whip_crack"
+  }
+}

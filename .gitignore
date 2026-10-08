@@ -18,3 +18,5 @@ Desktop.ini
 AvatarBending/.gradle/
 AvatarBending/build/
 AvatarBending/run/
+AvatarBending/run-prod/
+AvatarBending/run-prod-server/

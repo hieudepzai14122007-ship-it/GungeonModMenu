@@ -1,9 +1,12 @@
-AVATAR BENDING 1.0.0  -  Minecraft 1.21.1 (Fabric)
+AVATAR BENDING @VERSION@  -  Minecraft 1.21.1 (Fabric)
 =====================================================
 
+50 bending spells (10 for each element + 10 Avatar spells), custom sounds,
+glowing effects and the Avatar State.
+
 This zip contains:
-  overrides/mods/avatarbending-1.0.0.jar          <- the Avatar Bending mod
-  overrides/mods/fabric-api-0.116.17+1.21.1.jar   <- Fabric API (required)
+  overrides/mods/avatarbending-@VERSION@.jar          <- the Avatar Bending mod
+  overrides/mods/fabric-api-@FABRIC@.jar   <- Fabric API (required)
   manifest.json                                   <- lets launchers import the zip as a modpack
 
 
@@ -23,6 +26,9 @@ INSTALL WITH SKLAUNCHER
    mods folder from step 4.
 6. Select the Fabric 1.21.1 installation in SKLauncher and press Play.
 
+UPDATING FROM AN OLDER VERSION: delete the old avatarbending-1.0.0.jar from your
+mods folder first. Two copies of the mod in the same folder stop the game from starting.
+
 Tip: if your launcher has an "Import modpack" button (SKLauncher 4, Prism Launcher,
 CurseForge, MultiMC...), you can import this zip directly instead of steps 4-5.
 
@@ -40,8 +46,10 @@ When you join a world, a screen asks you to choose your element: Air, Water, Ear
   V  = Switch element    (only the Avatar)
   B  = Avatar State      (only the Avatar)
 
-Every spell costs Chi (the bar in the top-left corner). Chi refills by itself.
-You can change the keys in Options -> Controls -> Key Binds -> Avatar Bending.
+The small HUD next to your hotbar shows the selected spell, your Chi bar and one
+dot per spell (white = selected, dark = recharging). Every spell costs Chi, which
+refills by itself. You can change the keys in
+Options -> Controls -> Key Binds -> Avatar Bending.
 
 BECOME THE AVATAR
 Craft the Avatar Spirit in a crafting table:
@@ -51,12 +59,17 @@ Craft the Avatar Spirit in a crafting table:
         [the Sea   ] [ Undying     ] [ Block      ]
         [          ] [ Blaze Rod   ] [            ]
 
-Right-click with it to master all four elements, unlock 3 Avatar-only spells
-and the AVATAR STATE.
+Right-click with it to master all four elements, unlock the 10 Avatar spells
+and the AVATAR STATE (press B): flight, a four-element aura that blasts enemies
+away and turns arrows around, free spells and 75% more power for 30 seconds.
+Avatar's Wrath can only be used in the Avatar State.
 
 Cheats/creative: /bending avatar  makes you the Avatar instantly.
 Other commands: /bending info, /bending choose <element>, /bending reset,
 /bending set <player> <element>, /bending refill, /bending cast <spell>.
+
+Screen shake and flashes follow the "Distortion Effects" and "Hide Lightning
+Flashes" settings in Options -> Accessibility Settings.
 
 This is an unofficial fan mod. It is not affiliated with or endorsed by
 Nickelodeon or the creators of Avatar: The Last Airbender.

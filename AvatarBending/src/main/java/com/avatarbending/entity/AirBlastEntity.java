@@ -2,13 +2,15 @@ package com.avatarbending.entity;
 
 import com.avatarbending.ability.AbilityContext;
 import com.avatarbending.bending.Element;
+import com.avatarbending.fx.Fx;
+import com.avatarbending.sound.ModSounds;
+import com.avatarbending.sound.Sfx;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.projectile.ProjectileEntity;
-import net.minecraft.particle.ParticleTypes;
+import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
-import net.minecraft.sound.SoundCategory;
 import net.minecraft.sound.SoundEvents;
 import net.minecraft.util.math.Box;
 import net.minecraft.util.math.Vec3d;
@@ -66,8 +68,7 @@ public class AirBlastEntity extends BendingProjectileEntity {
 			if (!(entity instanceof LivingEntity living) || !super.canHit(entity) || !hit.add(entity.getUuid())) {
 				continue;
 			}
-			if (owner instanceof net.minecraft.server.network.ServerPlayerEntity player
-				&& !new AbilityContext(player, world, false).isTarget(living)) {
+			if (owner instanceof ServerPlayerEntity player && !new AbilityContext(player, world, false).isTarget(living)) {
 				continue;
 			}
 			hitEntity(world, living);
@@ -75,35 +76,20 @@ public class AirBlastEntity extends BendingProjectileEntity {
 			living.setVelocity(living.getVelocity().multiply(0.2).add(dir.x * strength, 0.35 + Math.max(0, dir.y) * strength, dir.z * strength));
 			living.velocityModified = true;
 			living.extinguish();
-			world.spawnParticles(ParticleTypes.GUST, living.getX(), living.getBodyY(0.5), living.getZ(), 1, 0, 0, 0, 0);
+			Fx.windBurst(world, living.getPos().add(0, living.getHeight() * 0.5, 0), dir, 0.7f);
+			Sfx.play(world, living.getPos(), SoundEvents.ENTITY_BREEZE_WIND_BURST, 0.7f, 1.3f);
 		}
 	}
 
 	@Override
 	protected void impact(ServerWorld world, Vec3d pos) {
-		world.spawnParticles(ParticleTypes.GUST, pos.x, pos.y, pos.z, 1, 0, 0, 0, 0);
-		world.spawnParticles(ParticleTypes.CLOUD, pos.x, pos.y, pos.z, 12, 0.3, 0.3, 0.3, 0.08);
-		world.playSound(null, pos.x, pos.y, pos.z, SoundEvents.ENTITY_BREEZE_WIND_BURST, SoundCategory.PLAYERS, 0.6f, 1.3f);
+		Fx.windBurst(world, pos, getVelocity().multiply(-1), 1.0f);
+		Sfx.play(world, pos, SoundEvents.ENTITY_BREEZE_WIND_BURST, 0.8f, 1.2f);
+		Sfx.play(world, pos, ModSounds.AIR_WHOOSH, 0.6f, 1.4f);
 	}
 
 	@Override
 	protected void expire(ServerWorld world) {
-		world.spawnParticles(ParticleTypes.POOF, getX(), getY(), getZ(), 6, 0.2, 0.2, 0.2, 0.02);
-	}
-
-	@Override
-	protected void clientTrail() {
-		World world = getWorld();
-		Vec3d v = getVelocity();
-		for (int i = 0; i < 4; i++) {
-			double angle = (age * 0.9) + i * (Math.PI / 2);
-			Vec3d side = new Vec3d(-v.z, 0, v.x).normalize().multiply(Math.cos(angle) * 0.35);
-			double up = Math.sin(angle) * 0.35;
-			world.addParticle(ParticleTypes.CLOUD, getX() + side.x, getY() + 0.25 + up, getZ() + side.z,
-				-v.x * 0.05, -v.y * 0.05, -v.z * 0.05);
-		}
-		if (age % 3 == 0) {
-			world.addParticle(ParticleTypes.SMALL_GUST, getX(), getY() + 0.25, getZ(), 0, 0, 0);
-		}
+		Fx.windBurst(world, getPos(), getVelocity(), 0.5f);
 	}
 }

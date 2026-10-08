@@ -55,6 +55,34 @@ public final class TempBlocks {
 		return true;
 	}
 
+	/**
+	 * Temporarily removes a natural block (used by Fissure). Only simple blocks are removed: never
+	 * containers, unbreakable or very hard blocks, fluids or falling blocks. Neighbor physics are
+	 * not triggered, so nothing collapses or flows while the gap is open.
+	 *
+	 * @return true if the block was removed
+	 */
+	public static boolean remove(ServerWorld world, BlockPos pos, int duration) {
+		if (!world.isInBuildLimit(pos) || !world.isChunkLoaded(pos)) {
+			return false;
+		}
+		Key key = new Key(world.getRegistryKey(), pos.toImmutable());
+		if (ENTRIES.containsKey(key)) {
+			return false;
+		}
+		BlockState current = world.getBlockState(pos);
+		float hardness = current.getHardness(world, pos);
+		if (current.isAir() || !current.getFluidState().isEmpty() || world.getBlockEntity(pos) != null
+			|| hardness < 0 || hardness >= 20 || current.getBlock() instanceof net.minecraft.block.FallingBlock
+			|| !current.isSolidBlock(world, pos)) {
+			return false;
+		}
+		BlockState air = net.minecraft.block.Blocks.AIR.getDefaultState();
+		world.setBlockState(pos, air, Block.NOTIFY_LISTENERS | Block.FORCE_STATE);
+		ENTRIES.put(key, new Entry(world, key.pos(), current, air, ticks + duration));
+		return true;
+	}
+
 	public static boolean isTemp(World world, BlockPos pos) {
 		return ENTRIES.containsKey(new Key(world.getRegistryKey(), pos));
 	}
@@ -92,7 +120,8 @@ public final class TempBlocks {
 		ServerWorld world = entry.world();
 		// Reading the state loads the chunk if needed, so blocks are restored even far away.
 		BlockState now = world.getBlockState(entry.pos());
-		if (now.equals(entry.placed()) || now.isAir()) {
+		boolean removal = entry.placed().isAir();
+		if (now.equals(entry.placed()) || now.isAir() || (removal && now.isReplaceable())) {
 			int flags = entry.original().getFluidState().isEmpty()
 				? Block.NOTIFY_LISTENERS | Block.FORCE_STATE
 				: Block.NOTIFY_ALL;

@@ -3,15 +3,17 @@ package com.avatarbending.entity;
 import com.avatarbending.ability.AbilityContext;
 import com.avatarbending.bending.Element;
 import com.avatarbending.effect.TempBlocks;
+import com.avatarbending.fx.Colors;
+import com.avatarbending.fx.Fx;
+import com.avatarbending.sound.ModSounds;
+import com.avatarbending.sound.Sfx;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.LivingEntity;
-import net.minecraft.particle.ParticleTypes;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
-import net.minecraft.sound.SoundCategory;
 import net.minecraft.sound.SoundEvents;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
@@ -19,7 +21,7 @@ import net.minecraft.world.World;
 
 /**
  * The Avatar's meteor: a huge burning chunk of magma pulled down from the sky. Explodes without
- * breaking any blocks and leaves a short-lived ring of fire-like magma.
+ * breaking any blocks and scatters glowing magma debris that cools down after a few seconds.
  */
 public class MeteorEntity extends BlockProjectileEntity {
 	public MeteorEntity(EntityType<? extends MeteorEntity> type, World world) {
@@ -60,20 +62,20 @@ public class MeteorEntity extends BlockProjectileEntity {
 
 	@Override
 	protected void serverTick(ServerWorld world) {
-		if (age % 4 == 0) {
-			world.playSound(null, getX(), getY(), getZ(), SoundEvents.ENTITY_BLAZE_SHOOT, SoundCategory.PLAYERS, 2f, 0.4f);
+		if (age % 6 == 0) {
+			Sfx.play(world, getPos(), ModSounds.FIRE_ROAR, 3f, 0.55f);
 		}
 	}
 
 	@Override
 	protected void impact(ServerWorld world, Vec3d pos) {
-		world.spawnParticles(ParticleTypes.EXPLOSION_EMITTER, pos.x, pos.y, pos.z, 2, 1, 0.5, 1, 0);
-		world.spawnParticles(ParticleTypes.FLAME, pos.x, pos.y + 0.5, pos.z, 200, 2.5, 1, 2.5, 0.25);
-		world.spawnParticles(ParticleTypes.LAVA, pos.x, pos.y + 0.5, pos.z, 60, 2, 0.5, 2, 0);
-		world.spawnParticles(ParticleTypes.LARGE_SMOKE, pos.x, pos.y + 1, pos.z, 80, 2.5, 1.5, 2.5, 0.05);
-		world.spawnParticles(AbilityContext.blockDust(Blocks.MAGMA_BLOCK.getDefaultState()), pos.x, pos.y + 0.5, pos.z, 120, 2, 0.5, 2, 0.4);
-		world.playSound(null, pos.x, pos.y, pos.z, SoundEvents.ENTITY_GENERIC_EXPLODE.value(), SoundCategory.PLAYERS, 4f, 0.5f);
-		world.playSound(null, pos.x, pos.y, pos.z, SoundEvents.ENTITY_LIGHTNING_BOLT_IMPACT, SoundCategory.PLAYERS, 3f, 0.6f);
+		Fx.explosion(world, pos, Element.FIRE, 3.5f);
+		Fx.groundShockwave(world, pos, Colors.LAVA, 11f);
+		Fx.flash(world, pos, 0xFFB060, 40);
+		Fx.shake(world, pos, 5f, 70);
+		Sfx.play(world, pos, ModSounds.FIRE_EXPLOSION, 5f, 0.6f);
+		Sfx.play(world, pos, ModSounds.QUAKE_BOOM, 5f, 0.8f);
+		Sfx.play(world, pos, SoundEvents.ENTITY_LIGHTNING_BOLT_IMPACT, 3f, 0.6f);
 
 		double radius = 7 * power;
 		if (getOwner() instanceof ServerPlayerEntity player) {
@@ -111,20 +113,5 @@ public class MeteorEntity extends BlockProjectileEntity {
 	@Override
 	protected void expire(ServerWorld world) {
 		impact(world, getPos());
-	}
-
-	@Override
-	protected void clientTrail() {
-		World world = getWorld();
-		double y = getY() + getHeight() / 2;
-		double r = getWidth() / 2;
-		for (int i = 0; i < 10; i++) {
-			world.addParticle(ParticleTypes.FLAME, getX() + (random.nextDouble() - 0.5) * r * 2, y + (random.nextDouble() - 0.5) * r * 2,
-				getZ() + (random.nextDouble() - 0.5) * r * 2, 0, 0.05, 0);
-		}
-		for (int i = 0; i < 4; i++) {
-			world.addParticle(ParticleTypes.LARGE_SMOKE, getX() + (random.nextDouble() - 0.5) * r, y + 0.5, getZ() + (random.nextDouble() - 0.5) * r, 0, 0.05, 0);
-		}
-		world.addParticle(ParticleTypes.LAVA, getX(), y, getZ(), 0, 0, 0);
 	}
 }

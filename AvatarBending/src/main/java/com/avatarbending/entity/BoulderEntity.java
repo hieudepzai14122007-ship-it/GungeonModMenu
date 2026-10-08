@@ -2,15 +2,17 @@ package com.avatarbending.entity;
 
 import com.avatarbending.ability.AbilityContext;
 import com.avatarbending.bending.Element;
+import com.avatarbending.fx.Colors;
+import com.avatarbending.fx.Fx;
+import com.avatarbending.sound.ModSounds;
+import com.avatarbending.sound.Sfx;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.LivingEntity;
-import net.minecraft.particle.BlockStateParticleEffect;
-import net.minecraft.particle.ParticleTypes;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
-import net.minecraft.sound.SoundCategory;
 import net.minecraft.sound.SoundEvents;
+import net.minecraft.util.hit.BlockHitResult;
 import net.minecraft.util.hit.HitResult;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
@@ -51,18 +53,18 @@ public class BoulderEntity extends BlockProjectileEntity {
 			if (raiseTicks == 0) {
 				Entity owner = getOwner();
 				Vec3d dir = owner != null ? owner.getRotationVec(1f) : getVelocity().normalize();
-				// Aim from the owner's eyes so the boulder flies to the crosshair.
 				if (owner instanceof ServerPlayerEntity player) {
 					HitResult hit = new AbilityContext(player, (ServerWorld) getWorld(), false).raycast(48);
-					Vec3d target = hit.getPos();
 					Vec3d from = getPos().add(0, getHeight() / 2, 0);
-					if (target.squaredDistanceTo(from) > 1) {
-						dir = target.subtract(from).normalize();
+					if (hit.getPos().squaredDistanceTo(from) > 1) {
+						dir = hit.getPos().subtract(from).normalize();
 					}
 				}
 				setVelocity(dir.multiply(launchSpeed));
 				velocityModified = true;
-				getWorld().playSound(null, getX(), getY(), getZ(), SoundEvents.ENTITY_IRON_GOLEM_ATTACK, SoundCategory.PLAYERS, 1f, 0.6f);
+				ServerWorld world = (ServerWorld) getWorld();
+				Sfx.play(world, getPos(), ModSounds.AIR_WHOOSH, 1.2f, 0.55f);
+				Sfx.play(world, getPos(), SoundEvents.ENTITY_IRON_GOLEM_ATTACK, 1f, 0.6f);
 			} else {
 				setVelocity(0, 0.28, 0);
 			}
@@ -76,7 +78,7 @@ public class BoulderEntity extends BlockProjectileEntity {
 	}
 
 	@Override
-	protected void onBlockHit(net.minecraft.util.hit.BlockHitResult hit) {
+	protected void onBlockHit(BlockHitResult hit) {
 		if (raiseTicks > 0) {
 			// Still rising out of the ground: ignore the ground it came from.
 			return;
@@ -94,11 +96,10 @@ public class BoulderEntity extends BlockProjectileEntity {
 
 	@Override
 	protected void impact(ServerWorld world, Vec3d pos) {
-		world.spawnParticles(AbilityContext.blockDust(getBlockState()), pos.x, pos.y, pos.z, 60, 0.6, 0.6, 0.6, 0.3);
-		world.spawnParticles(new BlockStateParticleEffect(ParticleTypes.DUST_PILLAR, getBlockState()), pos.x, pos.y, pos.z, 20, 0.6, 0.2, 0.6, 0.1);
-		world.spawnParticles(ParticleTypes.POOF, pos.x, pos.y, pos.z, 8, 0.4, 0.4, 0.4, 0.05);
-		world.playSound(null, pos.x, pos.y, pos.z, getBlockState().getSoundGroup().getBreakSound(), SoundCategory.PLAYERS, 1.5f, 0.6f);
-		world.playSound(null, pos.x, pos.y, pos.z, SoundEvents.ENTITY_GENERIC_EXPLODE.value(), SoundCategory.PLAYERS, 0.5f, 1.4f);
+		Fx.debris(world, pos, getBlockState(), 1.5f);
+		Fx.groundShockwave(world, pos, Colors.EARTH, 3.5f);
+		Sfx.play(world, pos, ModSounds.ROCK_IMPACT, 2.0f, 0.85f);
+		Sfx.play(world, pos, getBlockState().getSoundGroup().getBreakSound(), 1.5f, 0.6f);
 		if (getOwner() instanceof ServerPlayerEntity player) {
 			AbilityContext context = new AbilityContext(player, world, false);
 			for (LivingEntity nearby : context.targetsAround(pos, 2.5 * power)) {
@@ -114,12 +115,5 @@ public class BoulderEntity extends BlockProjectileEntity {
 	@Override
 	protected void expire(ServerWorld world) {
 		impact(world, getPos());
-	}
-
-	@Override
-	protected void clientTrail() {
-		if (age % 2 == 0) {
-			getWorld().addParticle(AbilityContext.blockDust(getBlockState()), getX(), getY() + 0.5, getZ(), 0, 0, 0);
-		}
 	}
 }

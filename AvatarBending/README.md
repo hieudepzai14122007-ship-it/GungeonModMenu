@@ -1,18 +1,22 @@
 # Avatar Bending
 
-A Minecraft mod inspired by *Avatar: The Last Airbender*. Choose Air, Water, Earth or Fire, unleash **27 bending spells**, then craft the **Avatar Spirit** to master all four elements and enter the **Avatar State**.
+A Minecraft mod inspired by *Avatar: The Last Airbender*. Choose Air, Water, Earth or Fire and unleash **50 bending spells**: 10 for each element plus 10 Avatar spells. Then craft the **Avatar Spirit** to master all four elements and enter the **Avatar State**.
 
 **Minecraft 1.21.1 · Fabric · Fabric API required**
 
 | | |
 |---|---|
-| ![Choose your element](screenshots/choose-element.jpg) | ![Avatar State](screenshots/avatar-state.jpg) |
-| ![Tornado](screenshots/tornado.jpg) | ![Meteor Strike](screenshots/meteor-strike.jpg) |
-| ![Inferno Ring](screenshots/inferno-ring.jpg) | ![Bending Scroll](screenshots/bending-scroll.jpg) |
+| ![Avatar State](screenshots/avatar-state.jpg) | ![Avatar's Wrath](screenshots/avatars-wrath.jpg) |
+| ![Meteor Strike](screenshots/meteor-strike.jpg) | ![Firestorm](screenshots/firestorm.jpg) |
+| ![Volcano](screenshots/volcano.jpg) | ![Lightning chaining between enemies](screenshots/lightning.jpg) |
+| ![Elemental Beam](screenshots/elemental-beam.jpg) | ![Octopus Form](screenshots/octopus-form.jpg) |
+| ![Blizzard](screenshots/blizzard.jpg) | ![Raava's Light](screenshots/raavas-light.jpg) |
+| ![The compact HUD in the Avatar State](screenshots/hud.jpg) | ![Bending Scroll](screenshots/bending-scroll.jpg) |
+| ![Choose your element](screenshots/choose-element.jpg) | |
 
 ## Download
 
-Download [`release/AvatarBending-1.0.0-Fabric-1.21.1.zip`](release/AvatarBending-1.0.0-Fabric-1.21.1.zip). It contains the mod, Fabric API and install instructions.
+Download [`release/AvatarBending-2.0.0-Fabric-1.21.1.zip`](release/AvatarBending-2.0.0-Fabric-1.21.1.zip). It contains the mod, Fabric API and install instructions.
 
 ## Install with SKLauncher
 
@@ -25,6 +29,8 @@ Download [`release/AvatarBending-1.0.0-Fabric-1.21.1.zip`](release/AvatarBending
 
    If the installation uses its own game directory, use the `mods` folder inside it.
 4. Select the Fabric 1.21.1 installation and press **Play**.
+
+**Updating from 1.0.0?** Delete the old `avatarbending-1.0.0.jar` from your `mods` folder first. Two copies of the mod stop the game from starting.
 
 Launchers with an **Import modpack** option, such as SKLauncher 4, Prism Launcher, CurseForge and MultiMC, can import the zip directly. The zip has a CurseForge-style `manifest.json`.
 
@@ -40,20 +46,42 @@ The keys can be changed in **Options → Controls → Key Binds → Avatar Bendi
 | **V** | Switch element (Avatar only) |
 | **B** | Avatar State (Avatar only) |
 
-The top-left panel shows your element, the selected spell, your **chi** and the cooldown of each spell slot. Every spell costs chi, which refills by itself.
+A small HUD next to the hotbar shows:
+- the selected spell, which turns gray while it recharges and red when you lack the chi;
+- a slim **chi** bar, with a tick mark at the cost of the selected spell;
+- one dot per spell: white for the selected one, dark while recharging.
+
+Every spell costs chi, which refills by itself.
 
 ## Spells
 
-| Air | Water | Earth | Fire |
-|---|---|---|---|
-| Air Blast | Water Whip | Boulder Toss | Fire Blast |
-| Air Barrage | Ice Shards | Earth Spikes | Fire Fists |
-| Air Leap | Ice Wave | Earth Wall | Fire Jet |
-| Air Scooter | Healing Waters | Earth Pillar | Inferno Ring |
-| Tornado | Water Spout | Seismic Slam | Combustion |
-| Air Sphere | Tidal Wave | Earth Armor | Lightning |
+| Air | Water | Earth | Fire | Avatar |
+|---|---|---|---|---|
+| Air Blast | Water Whip | Boulder Toss | Fire Blast | Elemental Storm |
+| Air Barrage | Ice Shards | Rock Barrage | Fire Fists | Energybending |
+| Air Blade | Ice Wave | Earth Spikes | Fire Whip | Meteor Strike |
+| Air Leap | Glacier Bomb | Earth Wall | Fire Jet | Elemental Beam |
+| Air Scooter | Healing Waters | Earth Pillar | Inferno Ring | Fire Tornado |
+| Wind Shield | Water Spout | Metal Cables | Dragon Breath | Blizzard |
+| Vacuum | Octopus Form | Earth Armor | Fire Dragon | Volcano |
+| Air Sphere | Tidal Wave | Seismic Slam | Combustion | Spirit Form |
+| Tornado | Bloodbending | Lavabending | Lightning | Raava's Light |
+| Air Cannon | Maelstrom | Fissure | Firestorm | Avatar's Wrath |
 
-**Avatar-only spells:** Elemental Storm, Energybending and Meteor Strike.
+Some highlights:
+- **Air Cannon:** compresses the wind into a sonic blast that pierces everything in a 40-block line.
+- **Vacuum:** sucks every mob into one point, then smashes them together.
+- **Octopus Form:** eight water tentacles lash nearby mobs and swat projectiles out of the air.
+- **Bloodbending:** lifts every creature nearby and slams it down. Stronger under a full moon.
+- **Fissure:** tears the ground open under your enemies, then slams it shut. The ground always closes back.
+- **Metal Cables:** zip to any block, or yank a mob to you.
+- **Fire Dragon:** a serpent of fire that hunts the nearest enemy.
+- **Lightning:** chains to up to three more enemies, and is even stronger in thunderstorms.
+- **Firestorm:** burning meteors rain down on the area you aim at.
+- **Spirit Form:** leave your body as a glowing spirit. You can fly and turn invisible, and mobs lose track of you.
+- **Avatar's Wrath:** only in the Avatar State. You rise up and unleash waves of every element and bolts of lightning, ending in a cataclysm.
+
+Hover over a spell in the Bending Scroll (**K**) to read what it does.
 
 **Passive bonuses:**
 
@@ -78,13 +106,19 @@ Heart of the Sea  Totem of Undying  Diamond Block
 
 Use it to unlock all four elements and the Avatar spells.
 
-Press **B** to enter the **Avatar State** for 30 seconds, with a 2 minute cooldown. While it's active:
+Press **B** to enter the **Avatar State** for 30 seconds, with a 2 minute cooldown. You rise inside a pillar of light while the four elements burst out around you. While it's active:
 - You can fly.
-- Your eyes and arrow tattoos glow.
-- A four-element aura surrounds you.
+- Your eyes glow and a four-element aura orbits you.
+- The aura blasts away enemies that come close and turns back arrows and enemy bending.
 - Spells are free, 75% stronger and recharge four times faster.
 
 The Avatar State also awakens by itself when the Avatar is about to die.
+
+## Effects and sound
+
+- Every spell has its own glowing particle effects: light, flames, wind, water, ice, rock and lightning.
+- Big spells shake the camera and flash the screen. Both follow the **Distortion Effects** and **Hide Lightning Flashes** accessibility settings.
+- 22 sound effects were made for the mod and are layered with vanilla sounds.
 
 ## Commands
 
@@ -104,7 +138,7 @@ The Avatar State also awakens by itself when the Avatar is about to die.
 No spell destroys or steals blocks:
 - **Explosions:** no terrain damage.
 - **Lightning:** cosmetic, so it never starts fires.
-- **Earth walls, spikes, pillars and ice:** temporary. They sink back after a few seconds, never drop items when broken, and are removed when the world closes.
+- **Temporary terrain:** earth walls, spikes, pillars, ice, magma, the Volcano and the Fissure all sink back or close up after a few seconds. They never drop items when broken and are restored when the world closes.
 
 ## Building from source
 
@@ -114,7 +148,10 @@ Requires Java 21.
 ./gradlew build          # mod jar in build/libs/
 ./gradlew modpack        # SKLauncher zip in release/
 ./gradlew runGametest    # automated tests: every spell is cast at a test target
-python3 tools/gen_textures.py   # regenerate the textures
+./gradlew prodClient     # play-test the release jar in a normal (non-dev) game
+python3 tools/gen_textures.py    # regenerate the GUI textures
+python3 tools/gen_particles.py   # regenerate the particle textures
+python3 tools/gen_sounds.py      # regenerate the sound effects (needs numpy, scipy and ffmpeg)
 ```
 
 ---

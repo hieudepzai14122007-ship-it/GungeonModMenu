@@ -1,16 +1,16 @@
 package com.avatarbending.entity;
 
 import com.avatarbending.bending.Element;
+import com.avatarbending.fx.Fx;
+import com.avatarbending.sound.ModSounds;
+import com.avatarbending.sound.Sfx;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.effect.StatusEffectInstance;
 import net.minecraft.entity.effect.StatusEffects;
-import net.minecraft.particle.ParticleTypes;
 import net.minecraft.server.world.ServerWorld;
-import net.minecraft.sound.SoundCategory;
-import net.minecraft.sound.SoundEvents;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 
@@ -52,13 +52,7 @@ public class IceShardEntity extends BlockProjectileEntity {
 
 	@Override
 	protected void impact(ServerWorld world, Vec3d pos) {
-		world.spawnParticles(ParticleTypes.SNOWFLAKE, pos.x, pos.y, pos.z, 10, 0.2, 0.2, 0.2, 0.05);
-		world.spawnParticles(ParticleTypes.ITEM_SNOWBALL, pos.x, pos.y, pos.z, 6, 0.2, 0.2, 0.2, 0.05);
-		world.playSound(null, pos.x, pos.y, pos.z, SoundEvents.BLOCK_GLASS_BREAK, SoundCategory.PLAYERS, 0.5f, 1.6f);
-	}
-
-	@Override
-	protected void clientTrail() {
-		getWorld().addParticle(ParticleTypes.SNOWFLAKE, getX(), getY() + 0.15, getZ(), 0, 0, 0);
+		Fx.frost(world, pos, 0.4f);
+		Sfx.play(world, pos, ModSounds.ICE_CRACK, 0.6f, 1.4f);
 	}
 }
