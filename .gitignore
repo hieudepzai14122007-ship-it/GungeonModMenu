@@ -13,3 +13,8 @@
 *.suo
 Thumbs.db
 Desktop.ini
+
+# Avatar Bending (Minecraft mod) build output and dev runs
+AvatarBending/.gradle/
+AvatarBending/build/
+AvatarBending/run/

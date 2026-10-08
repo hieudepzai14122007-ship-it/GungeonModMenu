@@ -1,0 +1,30 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "pattern": [
+    " A ",
+    "WTE",
+    " F "
+  ],
+  "key": {
+    "A": {
+      "item": "minecraft:breeze_rod"
+    },
+    "W": {
+      "item": "minecraft:heart_of_the_sea"
+    },
+    "T": {
+      "item": "minecraft:totem_of_undying"
+    },
+    "E": {
+      "item": "minecraft:diamond_block"
+    },
+    "F": {
+      "item": "minecraft:blaze_rod"
+    }
+  },
+  "result": {
+    "id": "avatarbending:avatar_spirit",
+    "count": 1
+  }
+}

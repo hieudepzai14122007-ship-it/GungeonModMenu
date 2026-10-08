@@ -1,0 +1,22 @@
+{
+	"schemaVersion": 1,
+	"id": "avatarbending",
+	"version": "${version}",
+	"name": "Avatar Bending",
+	"description": "Master the four elements! Choose Air, Water, Earth or Fire, unleash 27 epic bending spells, then craft the Avatar Spirit to become the Avatar and enter the Avatar State. Unofficial fan mod.",
+	"authors": ["Avatar Bending contributors"],
+	"contact": {},
+	"license": "MIT",
+	"icon": "assets/avatarbending/icon.png",
+	"environment": "*",
+	"entrypoints": {
+		"main": ["com.avatarbending.AvatarBending"],
+		"client": ["com.avatarbending.client.AvatarBendingClient"]
+	},
+	"depends": {
+		"fabricloader": ">=0.15.11",
+		"minecraft": "~1.21.1",
+		"java": ">=21",
+		"fabric-api": "*"
+	}
+}

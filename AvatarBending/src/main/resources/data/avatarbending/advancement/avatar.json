@@ -1,0 +1,23 @@
+{
+  "parent": "avatarbending:bender",
+  "display": {
+    "icon": {
+      "id": "avatarbending:avatar_spirit"
+    },
+    "title": {
+      "translate": "advancements.avatarbending.avatar.title"
+    },
+    "description": {
+      "translate": "advancements.avatarbending.avatar.description"
+    },
+    "frame": "challenge",
+    "show_toast": true,
+    "announce_to_chat": true,
+    "hidden": false
+  },
+  "criteria": {
+    "granted": {
+      "trigger": "minecraft:impossible"
+    }
+  }
+}

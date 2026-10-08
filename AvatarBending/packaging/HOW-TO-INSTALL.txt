@@ -1,0 +1,62 @@
+AVATAR BENDING 1.0.0  -  Minecraft 1.21.1 (Fabric)
+=====================================================
+
+This zip contains:
+  overrides/mods/avatarbending-1.0.0.jar          <- the Avatar Bending mod
+  overrides/mods/fabric-api-0.116.17+1.21.1.jar   <- Fabric API (required)
+  manifest.json                                   <- lets launchers import the zip as a modpack
+
+
+INSTALL WITH SKLAUNCHER
+-----------------------
+1. Open SKLauncher and go to the "Installations" tab.
+2. Click "New installation".
+3. Under "Version", pick  Fabric  and  1.21.1  (any loader version 0.16 or newer).
+   Click Save.
+4. Open your mods folder:
+     Windows:  press Win+R, type  %appdata%\.minecraft\mods  and press Enter
+     macOS:    ~/Library/Application Support/minecraft/mods
+     Linux:    ~/.minecraft/mods
+   (Create the "mods" folder if it does not exist. If your installation uses its own
+   game directory, use the "mods" folder inside that directory instead.)
+5. Open this zip, go into  overrides  ->  mods  and copy BOTH .jar files into the
+   mods folder from step 4.
+6. Select the Fabric 1.21.1 installation in SKLauncher and press Play.
+
+Tip: if your launcher has an "Import modpack" button (SKLauncher 4, Prism Launcher,
+CurseForge, MultiMC...), you can import this zip directly instead of steps 4-5.
+
+Remove any other copy of Fabric API for a different Minecraft version from the
+mods folder, or the game will refuse to start.
+
+
+HOW TO PLAY
+-----------
+When you join a world, a screen asks you to choose your element: Air, Water, Earth or Fire.
+
+  R  = Bend (use the selected spell)
+  G  = Next spell        (Shift + G = previous spell)
+  K  = Bending Scroll: see every spell and click one to select it
+  V  = Switch element    (only the Avatar)
+  B  = Avatar State      (only the Avatar)
+
+Every spell costs Chi (the bar in the top-left corner). Chi refills by itself.
+You can change the keys in Options -> Controls -> Key Binds -> Avatar Bending.
+
+BECOME THE AVATAR
+Craft the Avatar Spirit in a crafting table:
+
+        [          ] [ Breeze Rod  ] [            ]
+        [Heart of  ] [ Totem of    ] [ Diamond    ]
+        [the Sea   ] [ Undying     ] [ Block      ]
+        [          ] [ Blaze Rod   ] [            ]
+
+Right-click with it to master all four elements, unlock 3 Avatar-only spells
+and the AVATAR STATE.
+
+Cheats/creative: /bending avatar  makes you the Avatar instantly.
+Other commands: /bending info, /bending choose <element>, /bending reset,
+/bending set <player> <element>, /bending refill, /bending cast <spell>.
+
+This is an unofficial fan mod. It is not affiliated with or endorsed by
+Nickelodeon or the creators of Avatar: The Last Airbender.

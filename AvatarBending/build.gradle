@@ -1,0 +1,134 @@
+plugins {
+	id 'fabric-loom' version "${loom_version}"
+	id 'maven-publish'
+}
+
+version = project.mod_version
+group = project.maven_group
+
+base {
+	archivesName = project.archives_base_name
+}
+
+repositories {
+}
+
+sourceSets {
+	gametest {
+		compileClasspath += sourceSets.main.compileClasspath + sourceSets.main.output
+		runtimeClasspath += sourceSets.main.runtimeClasspath + sourceSets.main.output
+	}
+}
+
+loom {
+	splitEnvironmentSourceSets()
+
+	mods {
+		"avatarbending" {
+			sourceSet sourceSets.main
+			sourceSet sourceSets.client
+		}
+		// Automated tests live in their own mod so they never ship in the release jar.
+		"avatarbending-gametest" {
+			sourceSet sourceSets.gametest
+		}
+	}
+
+	runs {
+		// Headless server run that executes the mod's GameTests and then exits.
+		gametest {
+			inherit server
+			source sourceSets.gametest
+			name "Game Test"
+			vmArg "-Dfabric-api.gametest"
+			vmArg "-Dfabric-api.gametest.report-file=${project.layout.buildDirectory.get()}/junit.xml"
+			runDir "build/gametest"
+		}
+	}
+}
+
+configurations {
+	// Mods bundled next to ours in the modpack zip (not compiled against).
+	bundledMods {
+		transitive = false
+	}
+}
+
+dependencies {
+	minecraft "com.mojang:minecraft:${project.minecraft_version}"
+	mappings "net.fabricmc:yarn:${project.yarn_mappings}:v2"
+	modImplementation "net.fabricmc:fabric-loader:${project.loader_version}"
+	modImplementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_version}"
+
+	bundledMods "net.fabricmc.fabric-api:fabric-api:${project.fabric_version}"
+}
+
+tasks.withType(ProcessResources).configureEach {
+	inputs.property "version", project.version
+
+	filesMatching("fabric.mod.json") {
+		expand "version": project.version
+	}
+}
+
+tasks.withType(JavaCompile).configureEach {
+	it.options.release = 21
+}
+
+java {
+	withSourcesJar()
+	sourceCompatibility = JavaVersion.VERSION_21
+	targetCompatibility = JavaVersion.VERSION_21
+}
+
+jar {
+	from("LICENSE") {
+		rename { "${it}_${project.base.archivesName.get()}" }
+	}
+}
+
+// ---------------------------------------------------------------------------
+// Modpack zip for SKLauncher / CurseForge-style launchers.
+// Layout: manifest.json + overrides/mods/*.jar + HOW-TO-INSTALL.txt
+// ---------------------------------------------------------------------------
+def packName = "AvatarBending-${project.mod_version}-Fabric-${project.minecraft_version}"
+def manifestDir = layout.buildDirectory.dir("modpack-manifest")
+
+tasks.register("modpackManifest") {
+	inputs.property "version", project.mod_version
+	inputs.property "mc", project.minecraft_version
+	inputs.property "loader", project.loader_version
+	outputs.dir manifestDir
+	doLast {
+		def dir = manifestDir.get().asFile
+		dir.mkdirs()
+		new File(dir, "manifest.json").text = groovy.json.JsonOutput.prettyPrint(groovy.json.JsonOutput.toJson([
+			minecraft      : [
+				version   : project.minecraft_version,
+				modLoaders: [[id: "fabric-${project.loader_version}", primary: true]]
+			],
+			manifestType   : "minecraftModpack",
+			manifestVersion: 1,
+			name           : "Avatar Bending",
+			version        : project.mod_version,
+			author         : "Avatar Bending",
+			files          : [],
+			overrides      : "overrides"
+		]))
+	}
+}
+
+tasks.register("modpack", Zip) {
+	group = "build"
+	description = "Builds the SKLauncher-ready modpack zip into release/."
+	dependsOn remapJar, modpackManifest
+	archiveFileName = "${packName}.zip"
+	destinationDirectory = file("release")
+
+	from(manifestDir)
+	from("packaging/HOW-TO-INSTALL.txt")
+	into("overrides/mods") {
+		from(remapJar.archiveFile)
+		from(configurations.bundledMods)
+	}
+}

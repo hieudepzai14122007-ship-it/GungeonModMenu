@@ -1,0 +1,15 @@
+{
+	"schemaVersion": 1,
+	"id": "avatarbending-gametest",
+	"version": "${version}",
+	"name": "Avatar Bending GameTests",
+	"description": "Automated tests for Avatar Bending (development only, not shipped).",
+	"license": "MIT",
+	"environment": "*",
+	"entrypoints": {
+		"fabric-gametest": ["com.avatarbending.test.BendingGameTests"]
+	},
+	"depends": {
+		"avatarbending": "*"
+	}
+}
